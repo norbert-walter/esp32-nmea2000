@@ -3,10 +3,6 @@
 
 #include <Arduino.h>
 #include "OBP60Hardware.h"
-#define FASTLED_ALL_PINS_HARDWARE_SPI
-#define FASTLED_ESP32_SPI_BUS FSPI
-#define FASTLED_ESP32_FLASH_LOCK 1
-#include <FastLED.h>                    // Driver for WS2812 RGB LED
 #include <GxEPD2_BW.h>                  // E-paper lib V2
 
 // Fonts declarations for display (#inclues see OBP60Extensions.cpp)
@@ -43,10 +39,6 @@ void hardwareInit();
 void setPortPin(uint pin, bool value);          // Set port pin for extension port
 
 void togglePortPin(uint pin);                   // Toggle extension port pin
-
-CHSV colorMapping(String colorString);          // Color mapping string to CHSV colors
-void setBacklightLED(uint brightness, CHSV color);// Set backlight LEDs
-void toggleBacklightLED(uint brightness, CHSV color);// Toggle backlight LEDs
 
 void setFlashLED(bool status);                  // Set flash LED
 void blinkingFlashLED();                        // Blinking function for flash LED

@@ -67,15 +67,6 @@ void OBP60Init(GwApi *api){
     api->getLogger()->logDebug(GwLog::DEBUG,"Backlight Mode is: %s", backlightMode);
     uint brightness = uint(api->getConfig()->getConfigItem(api->getConfig()->blBrightness,true)->asInt());
     String backlightColor = api->getConfig()->getConfigItem(api->getConfig()->blColor,true)->asString();
-    if(String(backlightMode) == "On"){
-           setBacklightLED(brightness, colorMapping(backlightColor));
-    }
-    if(String(backlightMode) == "Off"){
-           setBacklightLED(0, CHSV(HUE_BLUE, 255, 0)); // Backlight LEDs off (blue without britghness)
-    }
-    if(String(backlightMode) == "Control by Key"){
-           setBacklightLED(0, CHSV(HUE_BLUE, 255, 0)); // Backlight LEDs off (blue without britghness)
-    }
 
     // Settings flash LED mode
     String ledMode = api->getConfig()->getConfigItem(api->getConfig()->flashLED,true)->asString();
@@ -413,7 +404,7 @@ void OBP60Task(GwApi *api){
     String gpsOn=api->getConfig()->getConfigItem(api->getConfig()->useGPS,true)->asString();
     String tz = api->getConfig()->getConfigItem(api->getConfig()->timeZone,true)->asString();
     String backlightColor = api->getConfig()->getConfigItem(api->getConfig()->blColor,true)->asString();
-    CHSV color = colorMapping(backlightColor);
+
     uint brightness = 2.55 * uint(api->getConfig()->getConfigItem(api->getConfig()->blBrightness,true)->asInt());
     bool uvoltage = api->getConfig()->getConfigItem(api->getConfig()->underVoltage,true)->asBoolean();
 
@@ -489,7 +480,7 @@ void OBP60Task(GwApi *api){
                     if(String(backlight) == "Control by Key"){
                         if(keyboardMessage == 6){
                             LOG_DEBUG(GwLog::LOG,"Toggle Backlight LED");
-                            toggleBacklightLED(brightness, color);
+
                         }
                     }
                     // #9 Swipe right
@@ -531,12 +522,6 @@ void OBP60Task(GwApi *api){
                     commonData.sundata = calcSunsetSunrise(api, time->value , date->value, lat->value, lon->value, tz.toDouble());
                     // Backlight with sun control
                     if(String(backlight) == "Control by Sun"){
-                        if(commonData.sundata.sunDown == true){
-                            setBacklightLED(brightness, color);
-                        }
-                        else{
-                            setBacklightLED(0, CHSV(HUE_BLUE, 255, 0)); // Backlight LEDs off (blue without britghness)
-                        }           
 
                     }
                 }
