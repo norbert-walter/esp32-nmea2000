@@ -531,9 +531,9 @@ void OBP60Task(GwApi *api){
             if(millis() > starttime4 + 4000 && delayedDisplayUpdate == true){
                 starttime1 = millis();
                 starttime2 = millis();
-                getdisplay().init(115200);       // Display init
+//                getdisplay().init(115200);       // Display init
                 getdisplay().setFullWindow();    // Set full update
-                getdisplay().firstPage();
+                getdisplay().nextPage();
                 if(fastrefresh == "false"){
                     getdisplay().fillScreen(pixelcolor);// Clear display
                     getdisplay().nextPage();            // Full update
@@ -549,9 +549,9 @@ void OBP60Task(GwApi *api){
                 starttime1 = millis();
                 starttime2 = millis();
                 LOG_DEBUG(GwLog::DEBUG,"E-Ink full refresh first 5 min");
-                getdisplay().init(115200);       // Display init
+//                getdisplay().init(115200);       // Display init
                 getdisplay().setFullWindow();    // Set full update
-                getdisplay().firstPage();
+                getdisplay().nextPage();
                 if(fastrefresh == "false"){
                     getdisplay().fillScreen(pixelcolor);// Clear display
                     getdisplay().nextPage();            // Full update
@@ -564,9 +564,9 @@ void OBP60Task(GwApi *api){
             if(millis() > starttime2 + fullrefreshtime * 60 * 1000){
                 starttime2 = millis();
                 LOG_DEBUG(GwLog::DEBUG,"E-Ink full refresh");
-                getdisplay().init(115200);       // Display init
+//                getdisplay().init(115200);       // Display init
                 getdisplay().setFullWindow();    // Set full update
-                getdisplay().firstPage();
+                getdisplay().nextPage();
                 if(fastrefresh == "false"){
                     getdisplay().fillScreen(pixelcolor);// Clear display
                     getdisplay().nextPage();            // Full update
