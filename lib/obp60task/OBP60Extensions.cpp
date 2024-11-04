@@ -1,9 +1,6 @@
 #ifdef BOARD_OBP60S3
 
 #include <Arduino.h>
-#define FASTLED_ALL_PINS_HARDWARE_SPI
-#define FASTLED_ESP32_SPI_BUS FSPI
-#define FASTLED_ESP32_FLASH_LOCK 1
 #include <PCF8574.h>      // Driver for PCF8574 output modul from Horter
 #include <Wire.h>         // I2C
 #include <RTClib.h>       // Driver for DS1388 RTC
@@ -56,6 +53,9 @@ GxEPD2_BW<GxEPD2_420_SE0420NQ04, GxEPD2_420_SE0420NQ04::HEIGHT> display(GxEPD2_4
 // Export display in new funktion
 GxEPD2_BW<GxEPD2_420_SE0420NQ04, GxEPD2_420_SE0420NQ04::HEIGHT> & getdisplay(){return display;}
 #endif
+
+// Framebuffer for HTTP output 
+uint8_t framebuffer[GxEPD_WIDTH * GxEPD_HEIGHT / 8]; // Binary framebuffer (1 bit per pixel)
 
 // Horter I2C moduls
 PCF8574 pcf8574_Out(PCF8574_I2C_ADDR1); // First digital output modul PCF8574 from Horter
@@ -402,6 +402,51 @@ void generatorGraphic(uint x, uint y, int pcolor, int bcolor){
         getdisplay().setFont(&Ubuntu_Bold32pt7b);
         getdisplay().setCursor(xb-22, yb+20);
         getdisplay().print("G");
+}
+
+// BMP header for black-and-white image (1 bit per pixel)
+const uint8_t bmp_header[] = {
+  0x42, 0x4D, // 'BM' signature
+  0x36, 0x08, 0x00, 0x00, // File size in bytes (to be adjusted later)
+  0x00, 0x00, 0x00, 0x00, // Reserved
+  0x3E, 0x00, 0x00, 0x00, // Data offset (pixel array starts at byte 62)
+  0x28, 0x00, 0x00, 0x00, // Header size (40 bytes)
+  (uint8_t)(GxEPD_WIDTH & 0xFF), (uint8_t)((GxEPD_WIDTH >> 8) & 0xFF), 0x00, 0x00, // Image width
+  (uint8_t)(GxEPD_HEIGHT & 0xFF), (uint8_t)((GxEPD_HEIGHT >> 8) & 0xFF), 0x00, 0x00, // Image height
+  0x01, 0x00, // Number of color planes (1)
+  0x01, 0x00, // Color depth (1 bit per pixel)
+  0x00, 0x00, 0x00, 0x00, // Compression (none)
+  0x00, 0x08, 0x00, 0x00, // Image data size (calculate)
+  0x13, 0x0B, 0x00, 0x00, // Horizontal resolution (2835 pixels/meter)
+  0x13, 0x0B, 0x00, 0x00, // Vertical resolution (2835 pixels/meter)
+  0x02, 0x00, 0x00, 0x00, // Colors in color palette (2)
+  0x00, 0x00, 0x00, 0x00, // Important colors (all)
+  0x00, 0x00, 0x00, 0x00, // Color palette: Black
+  0xFF, 0xFF, 0xFF, 0x00  // Color palette: White
+};
+
+// Function to handle HTTP image request
+void handleImageRequest(AsyncWebServerRequest *request) {
+  // Fill framebuffer (test pattern, e.g., diagonal lines)
+  for (int i = 0; i < sizeof(framebuffer); i++) {
+    framebuffer[i] = (i % 2 == 0) ? 0xFF : 0x00; // Example pattern
+  }
+
+  // Calculate total file size
+  size_t imageSize = sizeof(bmp_header) + sizeof(framebuffer);
+
+  // Combine header and framebuffer into one buffer
+  uint8_t* imageBuffer = new uint8_t[imageSize];
+  memcpy(imageBuffer, bmp_header, sizeof(bmp_header));
+  memcpy(imageBuffer + sizeof(bmp_header), framebuffer, sizeof(framebuffer));
+
+  // Send response with content type and custom header
+  AsyncWebServerResponse *response = request->beginResponse_P(200, "image/bmp", (const uint8_t*)imageBuffer, imageSize);
+  response->addHeader("Content-Disposition", "inline; filename=image.bmp");
+  request->send(response);
+
+  // Free the allocated buffer
+  delete[] imageBuffer;
 }
 
 #endif

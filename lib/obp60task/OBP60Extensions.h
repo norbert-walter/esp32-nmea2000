@@ -2,10 +2,9 @@
 #define _OBP60EXTENSIONPORT_H
 
 #include <Arduino.h>
+#include <WiFi.h>
+#include <ESPAsyncWebServer.h>
 #include "OBP60Hardware.h"
-#define FASTLED_ALL_PINS_HARDWARE_SPI
-#define FASTLED_ESP32_SPI_BUS FSPI
-#define FASTLED_ESP32_FLASH_LOCK 1
 #include "LedSpiTask.h"
 #include <GxEPD2_BW.h>                  // E-paper lib V2
 
@@ -38,6 +37,8 @@ GxEPD2_BW<GxEPD2_420_GYE042A87, GxEPD2_420_GYE042A87::HEIGHT> & getdisplay();
 #ifdef DISPLAY_SE0420NQ04
 GxEPD2_BW<GxEPD2_420_SE0420NQ04, GxEPD2_420_SE0420NQ04::HEIGHT> & getdisplay();
 #endif
+
+void handleImageRequest(AsyncWebServerRequest *request);    // HTTP hande image request
 
 void hardwareInit();
 

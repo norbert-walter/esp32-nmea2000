@@ -1,4 +1,6 @@
 #ifdef BOARD_OBP60S3
+#include <WiFi.h>
+#include <ESPAsyncWebServer.h>
 #include "obp60task.h"
 #include "Pagedata.h"                   // Data exchange for pages
 #include "OBP60Hardware.h"              // PIN definitions
@@ -40,7 +42,6 @@ void OBP60Init(GwApi *api){
     api->getLogger()->logDebug(GwLog::LOG,"obp60init running");
     
     // Check I2C devices
-    
 
     // Init hardware
     hardwareInit();
@@ -293,6 +294,12 @@ void underVoltageDetection(GwApi *api){
 void OBP60Task(GwApi *api){
 //    vTaskDelete(NULL);
 //    return;
+
+    // Start HTTP creen copy service (BMP-Picture)
+    AsyncWebServer server(8080);
+    server.on("/image.bmp", HTTP_GET, handleImageRequest);
+    server.begin();
+
     GwLog *logger=api->getLogger();
     GwConfigHandler *config=api->getConfig();
     startLedTask(api);
