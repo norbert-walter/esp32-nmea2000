@@ -19,6 +19,7 @@
 #include "Ubuntu_Bold32pt7b.h"
 #include "DSEG7Classic-BoldItalic16pt7b.h"
 #include "DSEG7Classic-BoldItalic20pt7b.h"
+#include "DSEG7Classic-BoldItalic26pt7b.h"
 #include "DSEG7Classic-BoldItalic30pt7b.h"
 #include "DSEG7Classic-BoldItalic42pt7b.h"
 #include "DSEG7Classic-BoldItalic60pt7b.h"

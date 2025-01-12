@@ -125,7 +125,7 @@ FormatedData formatValue(GwApi::BoatValue *value, CommonData &commondata){
         result.unit = "";
     }
     //########################################################
-    else if (value->getFormat() == "formatCourse" || value->getFormat() == "formatWind"){
+    else if (value->getFormat() == "formatCourse"){
         double course = 0;
         if(usesimudata == false) {
             course = value->value;
@@ -141,7 +141,31 @@ FormatedData formatValue(GwApi::BoatValue *value, CommonData &commondata){
         snprintf(buffer,bsize,"%03.0f",course);
         result.unit = "Deg";
     }
-    //########################################################
+     //########################################################
+    else if (value->getFormat() == "formatWind"){
+        double WindAngle = 0;
+        if(usesimudata == false) {
+            WindAngle = value->value;
+            rawvalue = value->value;
+        }
+        else{
+            WindAngle = 2.53 + float(random(0, 10) / 100.0);
+            rawvalue = WindAngle;
+        }    
+        if ( WindAngle > M_PI)
+            WindAngle -= 2 * M_PI;
+        
+        WindAngle = WindAngle * 180 / M_PI;      // Unit conversion form rad to deg
+
+        // Format 3 numbers with prefix zero
+        if ( WindAngle >= 0 )
+            snprintf(buffer,bsize,"%03.0f",WindAngle);
+        else
+            snprintf(buffer,bsize,"%04.0f",WindAngle);
+ 
+        result.unit = "Deg";
+    }
+   //########################################################
     else if (value->getFormat() == "formatKnots" && (value->getName() == "SOG" || value->getName() == "STW")){
         double speed = 0;
         if(usesimudata == false) {

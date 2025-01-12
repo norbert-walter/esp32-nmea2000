@@ -205,6 +205,8 @@ void registerAllPages(PageList &list){
     list.add(&registerPageFourValues);
     extern PageDescription registerPageFourValues2;
     list.add(&registerPageFourValues2);
+    extern PageDescription registerPageSixValues;
+    list.add(&registerPageSixValues);
     extern PageDescription registerPageApparentWind;
     list.add(&registerPageApparentWind);
     extern PageDescription registerPageWindRose;

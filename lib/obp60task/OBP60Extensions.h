@@ -28,6 +28,7 @@ extern const GFXfont Ubuntu_Bold20pt7b;
 extern const GFXfont Ubuntu_Bold32pt7b;
 extern const GFXfont DSEG7Classic_BoldItalic16pt7b;
 extern const GFXfont DSEG7Classic_BoldItalic20pt7b;
+extern const GFXfont DSEG7Classic_BoldItalic26pt7b;
 extern const GFXfont DSEG7Classic_BoldItalic30pt7b;
 extern const GFXfont DSEG7Classic_BoldItalic42pt7b;
 extern const GFXfont DSEG7Classic_BoldItalic60pt7b;
