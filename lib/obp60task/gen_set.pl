@@ -11,7 +11,8 @@
                 Clock       0
                 DST810      0
                 FourValues2  4
-                FourValues 4
+                FourValues  4
+                SixValues   6
                 Generator   0
                 KeelPosition 0
                 OneValue    1
@@ -29,7 +30,7 @@
 #max number of pages supported by OBP60
 $NoOfPages=10;
 #Default selection for each page
-@Defaults=qw(Voltage WindRose OneValue TwoValues ThreeValues FourValues FourValues2 Clock RollPitch Battery2);
+@Defaults=qw(SixValues WindRose OneValue TwoValues ThreeValues FourValues FourValues2 Clock RollPitch Battery2);
 @Numbers=qw(one two three four five six seven eight nine ten);
 @Pages=sort(keys(%NoOfFieldsPerPage));
 $MaxNoOfFieldsPerPage=0; # inital value, gets updated with maximum entry from %NoOfFieldsPerPage
