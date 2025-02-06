@@ -421,32 +421,49 @@ void displayHeader(CommonData &commonData, GwApi::BoatValue *date, GwApi::BoatVa
         heartbeat = !heartbeat;
 
         // Date and time
+        String fmttype = commonData.config->getString(commonData.config->dateFormat);
+        String timesource = commonData.config->getString(commonData.config->timeSource);
+        double tz = commonData.config->getString(commonData.config->timeZone).toDouble();
         getdisplay().setTextColor(commonData.fgcolor);
         getdisplay().setFont(&Ubuntu_Bold8pt7b);
         getdisplay().setCursor(230, 15);
-        // Show date and time if date present
-        if(date->valid == true){
-            String acttime = formatValue(time, commonData).svalue;
-            acttime = acttime.substring(0, 5);
-            String actdate = formatValue(date, commonData).svalue;
-            getdisplay().print(acttime);
-            getdisplay().print(" ");
-            getdisplay().print(actdate);
-            getdisplay().print(" ");
-            if(commonData.config->getInt(commonData.config->timeZone) == 0){
-                getdisplay().print("UTC");
-            }
-            else{
-                getdisplay().print("LOT");
+        if (timesource == "RTC" or timesource == "iRTC") {
+            // TODO take DST into account
+            if (commonData.data.rtcValid) {
+                time_t tv = mktime(&commonData.data.rtcTime) + (int)(tz * 3600);
+                struct tm *local_tm = localtime(&tv);
+                getdisplay().print(formatTime('m', local_tm->tm_hour, local_tm->tm_min, 0));
+                getdisplay().print(" ");
+                getdisplay().print(formatDate(fmttype, local_tm->tm_year + 1900, local_tm->tm_mon + 1, local_tm->tm_mday));
+                getdisplay().print(" ");
+                getdisplay().print(tz == 0 ? "UTC" : "LOT");
+            } else {
+                getdisplay().print("RTC invalid");
             }
         }
-        else{
-            if(commonData.config->getBool(commonData.config->useSimuData) == true){
-                getdisplay().print("12:00 01.01.2024 LOT");
+        else if (timesource == "GPS") {
+            // Show date and time if date present
+            if(date->valid == true){
+                String acttime = formatValue(time, commonData).svalue;
+                acttime = acttime.substring(0, 5);
+                String actdate = formatValue(date, commonData).svalue;
+                getdisplay().print(acttime);
+                getdisplay().print(" ");
+                getdisplay().print(actdate);
+                getdisplay().print(" ");
+                getdisplay().print(tz == 0 ? "UTC" : "LOT");
             }
             else{
-                getdisplay().print("No GPS data");
+                if(commonData.config->getBool(commonData.config->useSimuData) == true){
+                    getdisplay().print("12:00 01.01.2024 LOT");
+                }
+                else{
+                    getdisplay().print("No GPS data");
+                }
             }
+        } // timesource == "GPS"
+        else {
+            getdisplay().print("No time source");
         }
     }
 }
